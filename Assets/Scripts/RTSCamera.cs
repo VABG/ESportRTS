@@ -55,7 +55,7 @@ public class RTSCamera : MonoBehaviour
         cameraHeightLerpTarget = Mathf.Clamp01(cameraHeightLerpTarget);
         cameraHeightLerp = Mathf.Lerp(cameraHeightLerp, cameraHeightLerpTarget, 8.0f * Time.deltaTime);
         cameraTransform.position = Vector3.Lerp(farCamTransform.position, nearCamPosition.position, cameraHeightLerp);
-        cameraTransform.rotation = Quaternion.Lerp(farCamTransform.rotation, nearCamPosition.rotation, cameraHeightLerp * cameraHeightLerp);
+        cameraTransform.rotation = Quaternion.Lerp(farCamTransform.rotation, nearCamPosition.rotation, Mathf.Pow(cameraHeightLerp, 3));
     }
 
     void InputWASD()
@@ -88,7 +88,8 @@ public class RTSCamera : MonoBehaviour
 
         if (Input.GetMouseButton(2))
         {
-            targetPosition -= (new Vector3(Input.GetAxis("Mouse X"),0 , Input.GetAxis("Mouse Y")));
+            targetPosition -= transform.right * Input.GetAxis("Mouse X");
+            targetPosition -= transform.forward * Input.GetAxis("Mouse Y");
         }
     }
 
