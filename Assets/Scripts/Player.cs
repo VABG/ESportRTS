@@ -11,11 +11,13 @@ public class Player : MonoBehaviour
 
     List<Structure> structures;
     Camera cam;
+
     [SerializeField] LayerMask placementLayerMask;
     [SerializeField] LayerMask selectionLayerMask;
     [SerializeField] EventSystem eventSystem;
     LocalNavMeshBuilder navBuilder;
-    public void PlaceBuilding(Structure buildingType)
+
+    public void StartPlacingBuilding(Structure buildingType)
     {
         CancelBuildingPlacing();
         activeBuilding = Instantiate(buildingType);
@@ -104,7 +106,7 @@ public class Player : MonoBehaviour
                 activeBuilding.SetPosition(hit.point);
             }
             bool canPlace = activeBuilding.CanPlace();
-            //Error here!
+            //Placement error here!
 
             if (canPlace && !eventSystem.IsPointerOverGameObject())
             {

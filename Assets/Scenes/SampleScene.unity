@@ -208,7 +208,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 665103725}
         m_TargetAssemblyTypeName: Player, Assembly-CSharp
-        m_MethodName: PlaceBuilding
+        m_MethodName: StartPlacingBuilding
         m_Mode: 2
         m_Arguments:
           m_ObjectArgument: {fileID: 1882442104910877054, guid: aed2607b16df15646ba0faa93ff0c8cf, type: 3}
@@ -381,7 +381,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &665103724 stripped
 GameObject:
@@ -483,7 +483,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &861211566
 MonoBehaviour:
@@ -582,7 +582,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 665103725}
         m_TargetAssemblyTypeName: Player, Assembly-CSharp
-        m_MethodName: PlaceBuilding
+        m_MethodName: StartPlacingBuilding
         m_Mode: 2
         m_Arguments:
           m_ObjectArgument: {fileID: 4427920868903789391, guid: d82a6765d5f020041b6c2c9bd993cece, type: 3}
@@ -715,7 +715,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 665103725}
         m_TargetAssemblyTypeName: Player, Assembly-CSharp
-        m_MethodName: PlaceBuilding
+        m_MethodName: StartPlacingBuilding
         m_Mode: 2
         m_Arguments:
           m_ObjectArgument: {fileID: 7959150012568936100, guid: 54326a40ef91e28479e15ec851765f33, type: 3}
@@ -806,7 +806,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1218908445
 GameObject:
@@ -959,7 +959,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 665103725}
         m_TargetAssemblyTypeName: Player, Assembly-CSharp
-        m_MethodName: PlaceBuilding
+        m_MethodName: StartPlacingBuilding
         m_Mode: 2
         m_Arguments:
           m_ObjectArgument: {fileID: 8430117470756392011, guid: 7100b2248684cec4e9bb94dfa771bb3f, type: 3}
@@ -1148,7 +1148,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1640489396
 GameObject:
@@ -1406,7 +1406,7 @@ RectTransform:
   - {fileID: 903254310}
   - {fileID: 1791462439}
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -1498,7 +1498,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 665103725}
         m_TargetAssemblyTypeName: Player, Assembly-CSharp
-        m_MethodName: PlaceBuilding
+        m_MethodName: StartPlacingBuilding
         m_Mode: 2
         m_Arguments:
           m_ObjectArgument: {fileID: 3640234454426878639, guid: 70b705eb98ec74b4d89a11bfa9871f9f, type: 3}
@@ -1625,6 +1625,63 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2059007506}
   m_CullTransparentMesh: 1
+--- !u!1001 &2119003307
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4427920868903789388, guid: d82a6765d5f020041b6c2c9bd993cece, type: 3}
+      propertyPath: m_RootOrder
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4427920868903789388, guid: d82a6765d5f020041b6c2c9bd993cece, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 197.54437
+      objectReference: {fileID: 0}
+    - target: {fileID: 4427920868903789388, guid: d82a6765d5f020041b6c2c9bd993cece, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.00001335144
+      objectReference: {fileID: 0}
+    - target: {fileID: 4427920868903789388, guid: d82a6765d5f020041b6c2c9bd993cece, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 274.82242
+      objectReference: {fileID: 0}
+    - target: {fileID: 4427920868903789388, guid: d82a6765d5f020041b6c2c9bd993cece, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4427920868903789388, guid: d82a6765d5f020041b6c2c9bd993cece, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4427920868903789388, guid: d82a6765d5f020041b6c2c9bd993cece, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4427920868903789388, guid: d82a6765d5f020041b6c2c9bd993cece, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4427920868903789388, guid: d82a6765d5f020041b6c2c9bd993cece, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4427920868903789388, guid: d82a6765d5f020041b6c2c9bd993cece, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4427920868903789388, guid: d82a6765d5f020041b6c2c9bd993cece, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4427920868903789390, guid: d82a6765d5f020041b6c2c9bd993cece, type: 3}
+      propertyPath: m_Name
+      value: Church_Small
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: d82a6765d5f020041b6c2c9bd993cece, type: 3}
 --- !u!1 &2138677391
 GameObject:
   m_ObjectHideFlags: 0
@@ -1739,7 +1796,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9214512321558582958, guid: be2b3471041ca5043b38ae320cf7cad9, type: 3}
       propertyPath: m_RootOrder
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 9214512321558582958, guid: be2b3471041ca5043b38ae320cf7cad9, type: 3}
       propertyPath: m_LocalPosition.x
