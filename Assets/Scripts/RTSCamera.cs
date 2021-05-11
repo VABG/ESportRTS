@@ -6,7 +6,9 @@ public class RTSCamera : MonoBehaviour
 {
     Camera cam;  
     [SerializeField] Transform nearCamPosition;
+    [SerializeField] float nearCamFOV;
     [SerializeField] Transform farCamTransform;
+    [SerializeField] float farCamFOV;
     [SerializeField] Transform cameraTransform;
     [SerializeField] LayerMask rayTraceMask;
     float cameraHeightLerp;
@@ -54,6 +56,7 @@ public class RTSCamera : MonoBehaviour
         cameraHeightLerpTarget += Input.mouseScrollDelta.y * scrollCamSpeedMult;
         cameraHeightLerpTarget = Mathf.Clamp01(cameraHeightLerpTarget);
         cameraHeightLerp = Mathf.Lerp(cameraHeightLerp, cameraHeightLerpTarget, 8.0f * Time.deltaTime);
+        cam.fieldOfView = Mathf.Lerp(farCamFOV, nearCamFOV, cameraHeightLerp);
         cameraTransform.position = Vector3.Lerp(farCamTransform.position, nearCamPosition.position, cameraHeightLerp);
         cameraTransform.rotation = Quaternion.Lerp(farCamTransform.rotation, nearCamPosition.rotation, Mathf.Pow(cameraHeightLerp, 3));
     }
