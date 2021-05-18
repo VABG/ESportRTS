@@ -2,12 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
     int funds;
     Structure activeBuilding;
     Structure selectedBuilding;
+    AICharacter selectedAI;
 
     List<Structure> structures;
     Camera cam;
@@ -16,6 +18,8 @@ public class Player : MonoBehaviour
     [SerializeField] LayerMask selectionLayerMask;
     [SerializeField] EventSystem eventSystem;
     LocalNavMeshBuilder navBuilder;
+
+    [SerializeField] WorldCanvas worldCanvas;
 
     public void StartPlacingBuilding(Structure buildingType)
     {
@@ -40,30 +44,62 @@ public class Player : MonoBehaviour
     void Update()
     {
         SelectedBuildingInput();
-        TrySelectBulding();
+        TrySelect();
         TryPlacingBuilding();
+        TryMoveAI();
+
     }
 
-    void TrySelectBulding()
+    void TryMoveAI()
+    {
+        if (Input.GetMouseButtonDown(1) && selectedAI != null)
+        {
+            Ray r = cam.ScreenPointToRay(Input.mousePosition);
+            if (Physics.Raycast(r, out RaycastHit hit, 5000))
+            {
+                selectedAI.SetMovePosition(hit.point);
+            }
+        }
+    }
+
+    void TrySelect()
     {
         if (Input.GetMouseButtonDown(0))
         {
+            selectedBuilding = null;
+            if (selectedAI != null) selectedAI.Deselect();
+            selectedAI = null;
+            worldCanvas.ClearSelectedCharacter();
             if (activeBuilding != null) return;
             Ray r = cam.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(r, out RaycastHit hit, 5000, selectionLayerMask))
             {
-                StructureCollider sc = hit.collider.GetComponent<StructureCollider>();
-                if (sc == null) return;
-                Structure s = sc.GetParent();
-                if (s != null)
+                if (hit.collider.gameObject.layer == 7)
                 {
-                    selectedBuilding = s;
-                    return;
+                    StructureCollider sc = hit.collider.GetComponent<StructureCollider>();
+                    if (sc != null)
+                    {
+                        Structure s = sc.GetParent();
+                        if (s != null)
+                        {
+                            selectedBuilding = s;
+                            selectedAI = null;
+                            return;
+                        }
+                    }
                 }
-            }
-            else
-            {
-                selectedBuilding = null;
+
+                else if (hit.collider.gameObject.layer == 6)
+                {
+                    AICharacter c = hit.collider.GetComponent<AICharacter>();
+                    if (c != null)
+                    {
+                        selectedBuilding = null;
+                        selectedAI = c;
+                        selectedAI.Select();
+                        worldCanvas.SetSelectedCharacter(c.gameObject);
+                    }
+                }
             }
         }
     }
