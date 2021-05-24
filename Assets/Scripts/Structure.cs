@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Structure : MonoBehaviour
 {
@@ -13,6 +14,13 @@ public class Structure : MonoBehaviour
     [SerializeField] bool randomScale = false;
     [SerializeField] float scaleRandomValue = .1f;
     [SerializeField] bool randomScaleAxis = true;
+
+    private void Awake()
+    {
+        if (SceneManager.GetActiveScene().isLoaded) return;
+        colliders = new List<StructureCollider>(placementCollidersParent.GetComponentsInChildren<StructureCollider>());
+        PlaceBuilding();
+    }
 
     private void Start()
     {        
@@ -28,7 +36,7 @@ public class Structure : MonoBehaviour
                 transform.localScale += new Vector3(scaleAdd, scaleAdd, scaleAdd);
             }
         }
-        colliders = new List<StructureCollider>(GetComponentsInChildren<StructureCollider>());
+        colliders = new List<StructureCollider>(placementCollidersParent.GetComponentsInChildren<StructureCollider>());
         foreach(StructureCollider s in colliders)
         {
             s.SetParent(this);
@@ -48,7 +56,6 @@ public class Structure : MonoBehaviour
         {
             s.GetComponent<Collider>().isTrigger = false;
         }
-        //GetComponent<LocalNavMeshBuilder>().Bake();
     }
 
     public bool CanPlace()
