@@ -18,7 +18,6 @@ public class Player : MonoBehaviour
     [SerializeField] LayerMask selectionLayerMask;
     [SerializeField] EventSystem eventSystem;
     LocalNavMeshBuilder navBuilder;
-
     [SerializeField] WorldCanvas worldCanvas;
 
     public void StartPlacingBuilding(Structure buildingType)
@@ -47,7 +46,6 @@ public class Player : MonoBehaviour
         TrySelect();
         TryPlacingBuilding();
         TryMoveAI();
-
     }
 
     void TryMoveAI()
@@ -112,6 +110,7 @@ public class Player : MonoBehaviour
             {
                 // Get funds back? Other actions?
                 Destroy(selectedBuilding.gameObject);
+                navBuilder.FlagForUpdate();
             }
         }
     }
