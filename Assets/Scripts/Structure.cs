@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class Structure : MonoBehaviour
 {
-    public int cost;
+    public Resources cost;
     public float health;
     int team;
     [SerializeField] GameObject placementCollidersParent;
@@ -14,7 +14,7 @@ public class Structure : MonoBehaviour
     [SerializeField] bool randomScale = false;
     [SerializeField] float scaleRandomValue = .1f;
     [SerializeField] bool randomScaleAxis = true;
-
+    [SerializeField] Transform accessPoint;
     private void Awake()
     {
         if (SceneManager.GetActiveScene().isLoaded) return;

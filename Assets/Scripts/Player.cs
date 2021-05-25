@@ -6,11 +6,11 @@ using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
-    int funds;
+    int gold;
     Structure activeBuilding;
     Structure selectedBuilding;
     AICharacter selectedAI;
-
+    PlayerResources resources;
     List<Structure> structures;
     Camera cam;
 
@@ -18,7 +18,6 @@ public class Player : MonoBehaviour
     [SerializeField] LayerMask selectionLayerMask;
     [SerializeField] EventSystem eventSystem;
     LocalNavMeshBuilder navBuilder;
-
     [SerializeField] WorldCanvas worldCanvas;
 
     public void StartPlacingBuilding(Structure buildingType)
@@ -38,6 +37,7 @@ public class Player : MonoBehaviour
         structures = new List<Structure>();
         cam = GetComponentInChildren<Camera>();
         navBuilder = FindObjectOfType<LocalNavMeshBuilder>();
+        resources = GetComponent<PlayerResources>();
     }
 
     // Update is called once per frame
@@ -47,7 +47,6 @@ public class Player : MonoBehaviour
         TrySelect();
         TryPlacingBuilding();
         TryMoveAI();
-
     }
 
     void TryMoveAI()
@@ -55,8 +54,25 @@ public class Player : MonoBehaviour
         if (Input.GetMouseButtonDown(1) && selectedAI != null)
         {
             Ray r = cam.ScreenPointToRay(Input.mousePosition);
+
             if (Physics.Raycast(r, out RaycastHit hit, 5000))
             {
+                Resource resource = hit.collider.GetComponent<Resource>();
+                if (resource != null)
+                {
+                    selectedAI.SetResource(resource);
+                    selectedAI.SetState(AIState.Collecting);
+                    return;
+                }
+                AICharacter c = hit.collider.GetComponent<AICharacter>();
+                if (c != null)
+                {
+                    selectedAI.SetKillTarget(c);
+                    selectedAI.SetState(AIState.Fighting);
+                    return;
+                }
+
+                selectedAI.SetState(AIState.Moving);
                 selectedAI.SetMovePosition(hit.point);
             }
         }
@@ -111,7 +127,9 @@ public class Player : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.Delete))
             {
                 // Get funds back? Other actions?
+                resources.AddResourcesFromDestroy(selectedBuilding.cost);
                 Destroy(selectedBuilding.gameObject);
+                navBuilder.FlagForUpdate();
             }
         }
     }
@@ -144,13 +162,12 @@ public class Player : MonoBehaviour
             bool canPlace = activeBuilding.CanPlace();
             //Placement error here!
 
-            if (canPlace && !eventSystem.IsPointerOverGameObject())
+            if (canPlace && !eventSystem.IsPointerOverGameObject() && resources.CanAfford(activeBuilding.cost))
             {
                 if (Input.GetMouseButtonDown(0))
                 {
-
                     structures.Add(activeBuilding);
-                    funds -= activeBuilding.cost;
+                    resources.TakeResources(activeBuilding.cost);
                     activeBuilding.PlaceBuilding();
                     activeBuilding = null;
                     //TODO: Replace with local update at object placement

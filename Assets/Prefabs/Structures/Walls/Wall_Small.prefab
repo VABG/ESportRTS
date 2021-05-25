@@ -46,10 +46,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 639fc342d04443747a7867a781c110e2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cost: 5
+  cost:
+    gold: 0
+    wood: 0
+    rock: 5
+    food: 0
   health: 100
   placementCollidersParent: {fileID: 5028946292173074501}
   visualsParent: {fileID: 3069531042674535600}
+  randomScale: 0
+  scaleRandomValue: 0.1
+  randomScaleAxis: 1
+  accessPoint: {fileID: 0}
 --- !u!54 &4094950482844268936
 Rigidbody:
   m_ObjectHideFlags: 0

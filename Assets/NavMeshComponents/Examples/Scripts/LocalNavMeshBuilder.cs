@@ -18,6 +18,7 @@ public class LocalNavMeshBuilder : MonoBehaviour
     AsyncOperation m_Operation;
     NavMeshDataInstance m_Instance;
     List<NavMeshBuildSource> m_Sources = new List<NavMeshBuildSource>();
+    bool update = false;
 
     void OnEnable()
     {
@@ -33,6 +34,20 @@ public class LocalNavMeshBuilder : MonoBehaviour
     {
         // Unload navmesh and clear handle
         m_Instance.Remove();
+    }
+
+    public void FlagForUpdate()
+    {
+        update = true;
+    }
+
+    private void Update()
+    {
+        if (update)
+        {
+            update = false;
+            UpdateNavMesh(true);
+        }
     }
 
     public void UpdateNavMesh(bool asyncUpdate = false)
