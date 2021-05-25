@@ -54,6 +54,7 @@ public class Player : MonoBehaviour
         if (Input.GetMouseButtonDown(1) && selectedAI != null)
         {
             Ray r = cam.ScreenPointToRay(Input.mousePosition);
+
             if (Physics.Raycast(r, out RaycastHit hit, 5000))
             {
                 Resource resource = hit.collider.GetComponent<Resource>();
@@ -61,12 +62,18 @@ public class Player : MonoBehaviour
                 {
                     selectedAI.SetResource(resource);
                     selectedAI.SetState(AIState.Collecting);
+                    return;
                 }
-                else
+                AICharacter c = hit.collider.GetComponent<AICharacter>();
+                if (c != null)
                 {
-                    selectedAI.SetState(AIState.Moving);
-                    selectedAI.SetMovePosition(hit.point);
+                    selectedAI.SetKillTarget(c);
+                    selectedAI.SetState(AIState.Fighting);
+                    return;
                 }
+
+                selectedAI.SetState(AIState.Moving);
+                selectedAI.SetMovePosition(hit.point);
             }
         }
     }
@@ -159,7 +166,6 @@ public class Player : MonoBehaviour
             {
                 if (Input.GetMouseButtonDown(0))
                 {
-
                     structures.Add(activeBuilding);
                     resources.TakeResources(activeBuilding.cost);
                     activeBuilding.PlaceBuilding();

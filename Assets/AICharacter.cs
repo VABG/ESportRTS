@@ -17,6 +17,7 @@ public class AICharacter : MonoBehaviour
 {
     AIState state;
     Resource activeResource;
+    AICharacter toKill;
     Resources resources = new Resources();
     BaseStructure nearestBase;
 
@@ -24,8 +25,10 @@ public class AICharacter : MonoBehaviour
     NavMeshAgent navMeshAgent;
     [SerializeField] GameObject selectedVisuals;
     int velocityID;
+
     bool doingAction = false;
     float actionTime = 0;
+    float health = 10;
 
     // Start is called before the first frame update
     void Start()
@@ -33,12 +36,12 @@ public class AICharacter : MonoBehaviour
         animator = GetComponentInChildren<Animator>();
         velocityID = Animator.StringToHash("Velocity");
         navMeshAgent = GetComponent<NavMeshAgent>();
-        resources = new Resources();
     }
 
     public void SetState(AIState state)
     {
         this.state = state;
+
         if (state == AIState.Collecting)
         {
             SetNearestBase();
@@ -52,6 +55,11 @@ public class AICharacter : MonoBehaviour
         }
     }
 
+    public void SetKillTarget(AICharacter ai)
+    {
+        toKill = ai;
+    }
+
     private void SetNearestBase()
     {
         BaseStructure[] b = FindObjectsOfType<BaseStructure>();
@@ -61,6 +69,7 @@ public class AICharacter : MonoBehaviour
         for (int i = 0; i < b.Length; i++)
         {
             float d = (b[i].transform.position - activeResource.transform.position).magnitude;
+
             if (d < nearest)
             {
                 nearest = d;
@@ -100,6 +109,7 @@ public class AICharacter : MonoBehaviour
                 MovingBehaviour();
                 break;
             case AIState.Fighting:
+                AttackBehaviour();
                 break;
             case AIState.Collecting:
                 CollectingBehaviour();
@@ -113,6 +123,44 @@ public class AICharacter : MonoBehaviour
         animator.SetFloat(velocityID, navMeshAgent.velocity.magnitude);
     }
 
+    public void TakeDamage(float dmg)
+    {
+        health -= dmg;
+        if (health <= 0) Destroy(this.gameObject);
+    }
+
+    private void AttackBehaviour()
+    {
+        if (doingAction)
+        {
+            actionTime -= Time.deltaTime;
+            if (actionTime <= 0)
+            {
+                doingAction = false;
+            }
+            return;
+        }
+
+        if (toKill == null)
+        {
+            state = AIState.Idle;
+        }
+        else
+        {
+            if (DistanceToTarget(toKill.transform.position) > 2)
+            {
+                navMeshAgent.SetDestination(toKill.transform.position);
+            }
+            else
+            {
+                toKill.TakeDamage(2);
+                animator.SetTrigger("Attack");
+                doingAction = true;
+                actionTime = .5f;
+            }
+        }
+    }
+
     private void IdleBehaviour()
     {
 
@@ -120,7 +168,7 @@ public class AICharacter : MonoBehaviour
 
     private void MovingBehaviour()
     {
-        if (navMeshAgent.isStopped) state = AIState.Idle;
+        if (navMeshAgent.pathStatus == NavMeshPathStatus.PathComplete) state = AIState.Idle;
     }
 
     private void CollectingBehaviour()
@@ -137,12 +185,15 @@ public class AICharacter : MonoBehaviour
             }
             return;
         }
+
         if (DistanceToTarget(activeResource.transform.position) < 3)
         {
             navMeshAgent.ResetPath();
             doingAction = true;
             actionTime = activeResource.CollectionTime();
+            animator.SetTrigger("Attack");
         }
+
         if (activeResource.IsEmpty())
         {
             state = AIState.Idle;
@@ -171,11 +222,13 @@ public class AICharacter : MonoBehaviour
             }
             return;
         }
+
         if (DistanceToTarget(nearestBase.transform.position) < 2)
         {
             navMeshAgent.ResetPath();
             doingAction = true;
             actionTime = 1.0f;
+            animator.SetTrigger("Attack");
         }
     }
 

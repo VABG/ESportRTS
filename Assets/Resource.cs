@@ -23,7 +23,11 @@ public class Resource : MonoBehaviour
     {
         resources.food -= takePerCollection.food;
         int food = takePerCollection.food;
-        if (resources.food < 0) food += resources.food;
+        if (resources.food < 0)
+        {
+            food += resources.food;
+            resources.food = 0;
+        }
 
         resources.wood -= takePerCollection.wood;
         int wood =  takePerCollection.wood;

@@ -19,16 +19,14 @@ public class PlayerResources : MonoBehaviour
     {
         hud.SetResources(resources);
     }
-    public bool CanAfford(Resources r)
+    public bool CanAfford(Resources cost)
     {
-        if (r.gold > resources.gold) return false;
-        if (r.wood > resources.wood) return false;
-        if (r.rock > resources.rock) return false;
-        if (r.food > resources.food) return false;
-
+        if (cost.gold > resources.gold) return false;
+        if (cost.wood > resources.wood) return false;
+        if (cost.rock > resources.rock) return false;
+        if (cost.food > resources.food) return false;
         return true;
     }
-
     public void AddResources(Resources r)
     {
         resources.gold += r.gold;
@@ -37,10 +35,9 @@ public class PlayerResources : MonoBehaviour
         resources.food += r.food;
         hud.SetResources(resources);
     }
-
     public void AddResourcesFromDestroy(Resources r)
     {
-        resources.gold += (int)(r.gold/returnDivider);
+        resources.gold += (int)(r.gold / returnDivider);
         resources.wood += (int)(r.wood / returnDivider);
         resources.rock += (int)(r.rock / returnDivider);
         resources.food += (int)(r.food / returnDivider);
