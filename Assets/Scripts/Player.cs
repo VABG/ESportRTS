@@ -120,6 +120,7 @@ public class Player : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.Delete))
             {
                 // Get funds back? Other actions?
+                resources.AddResourcesFromDestroy(selectedBuilding.cost);
                 Destroy(selectedBuilding.gameObject);
                 navBuilder.FlagForUpdate();
             }

@@ -11,6 +11,7 @@ public struct Resources
 public class PlayerResources : MonoBehaviour
 {
     [SerializeField] HUD hud;
+    [SerializeField] float returnDivider = 2;
     Resources resources;
 
     // Start is called before the first frame update
@@ -20,12 +21,12 @@ public class PlayerResources : MonoBehaviour
     }
     public bool CanAfford(Resources r)
     {
-        if (r.gold < resources.gold) return false;
-        if (r.wood < resources.wood) return false;
-        if (r.rock < resources.rock) return false;
-        if (r.food < resources.food) return false;
+        if (r.gold > resources.gold) return false;
+        if (r.wood > resources.wood) return false;
+        if (r.rock > resources.rock) return false;
+        if (r.food > resources.food) return false;
 
-        return false;
+        return true;
     }
 
     public void AddResources(Resources r)
@@ -34,6 +35,15 @@ public class PlayerResources : MonoBehaviour
         resources.wood += r.wood;
         resources.rock += r.rock;
         resources.food += r.food;
+        hud.SetResources(resources);
+    }
+
+    public void AddResourcesFromDestroy(Resources r)
+    {
+        resources.gold += (int)(r.gold/returnDivider);
+        resources.wood += (int)(r.wood / returnDivider);
+        resources.rock += (int)(r.rock / returnDivider);
+        resources.food += (int)(r.food / returnDivider);
         hud.SetResources(resources);
     }
 

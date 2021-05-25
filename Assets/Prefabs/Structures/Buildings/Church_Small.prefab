@@ -899,7 +899,7 @@ MonoBehaviour:
   cost:
     gold: 0
     wood: 0
-    rock: 0
+    rock: 100
     food: 0
   health: 500
   placementCollidersParent: {fileID: 7108524698622837364}
