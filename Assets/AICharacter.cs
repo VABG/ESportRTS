@@ -21,10 +21,13 @@ public class AICharacter : MonoBehaviour
     AICharacter toKill;
     Resources resources = new Resources();
     BaseStructure nearestBase;
-
+    [SerializeField] GameObject ragdollFirstRigidbody;
+    Rigidbody[] ragdollRigidBodies;
+    Collider[] ragdollColliders;
     Animator animator;
     NavMeshAgent navMeshAgent;
     [SerializeField] GameObject selectedVisuals;
+    [SerializeField] GameObject visuals;
     int velocityID;
 
     bool doingAction = false;
@@ -35,10 +38,26 @@ public class AICharacter : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        ragdollRigidBodies = ragdollFirstRigidbody.GetComponentsInChildren<Rigidbody>();
+        ragdollColliders = ragdollFirstRigidbody.GetComponentsInChildren<Collider>();
+        ToggleRagdoll(false);
+
         maxHealth = health;
         animator = GetComponentInChildren<Animator>();
         velocityID = Animator.StringToHash("Velocity");
         navMeshAgent = GetComponent<NavMeshAgent>();
+    }
+
+    private void ToggleRagdoll(bool enabled)
+    {
+        for (int i = 0; i < ragdollRigidBodies.Length; i++)
+        {
+            ragdollRigidBodies[i].isKinematic = !enabled;
+        }
+        for (int i = 0; i < ragdollColliders.Length; i++)
+        {
+            ragdollColliders[i].enabled = enabled;
+        }
     }
 
     public void SetState(AIState state)
@@ -130,7 +149,20 @@ public class AICharacter : MonoBehaviour
     {
         health -= dmg;
         SetHealthScale(health / maxHealth);
-        if (health <= 0) Destroy(this.gameObject);
+        if (health <= 0) Die();
+    }
+
+    private void Die()
+    {
+        ToggleRagdoll(true);
+        this.enabled = false;
+        navMeshAgent.enabled = false;
+        visuals.transform.parent = null;
+        GetComponent<CapsuleCollider>().enabled = false;
+        animator.enabled = false;
+        Destroy(healthBar);
+        Destroy(selectedVisuals);
+        Destroy(this);
     }
 
     public void SetHealthScale(float scale)
