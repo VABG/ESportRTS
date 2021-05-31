@@ -12,6 +12,7 @@ public class Player : MonoBehaviour
     AICharacter selectedAI;
     PlayerResources resources;
     List<Structure> structures;
+    HUD hud;
     Camera cam;
 
     [SerializeField] LayerMask placementLayerMask;
@@ -38,6 +39,7 @@ public class Player : MonoBehaviour
         cam = GetComponentInChildren<Camera>();
         navBuilder = FindObjectOfType<LocalNavMeshBuilder>();
         resources = GetComponent<PlayerResources>();
+        hud = FindObjectOfType<HUD>();
     }
 
     // Update is called once per frame
@@ -81,8 +83,9 @@ public class Player : MonoBehaviour
 
     void TrySelect()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && !eventSystem.IsPointerOverGameObject())
         {
+            hud.ClearState();
             selectedBuilding = null;
             if (selectedAI != null) selectedAI.Deselect();
             selectedAI = null;
@@ -101,6 +104,7 @@ public class Player : MonoBehaviour
                         {
                             selectedBuilding = s;
                             selectedAI = null;
+                            hud.SetUIBuildingState(s.GetBuildingType(), s);
                             return;
                         }
                     }
@@ -131,6 +135,7 @@ public class Player : MonoBehaviour
                 resources.AddResourcesFromDestroy(selectedBuilding.cost);
                 Destroy(selectedBuilding.gameObject);
                 navBuilder.FlagForUpdate();
+                hud.ClearState();
             }
         }
     }

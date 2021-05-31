@@ -15,6 +15,17 @@ public class Structure : MonoBehaviour
     [SerializeField] float scaleRandomValue = .1f;
     [SerializeField] bool randomScaleAxis = true;
     [SerializeField] Transform accessPoint;
+    [SerializeField] BuildingType buildingType;
+
+    public Transform GetAccessPoint()
+    {
+        return accessPoint;
+    }
+
+    public BuildingType GetBuildingType()
+    {
+        return buildingType;
+    }
     private void Awake()
     {
         if (SceneManager.GetActiveScene().isLoaded) return;

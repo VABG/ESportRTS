@@ -908,6 +908,7 @@ MonoBehaviour:
   scaleRandomValue: 0.1
   randomScaleAxis: 1
   accessPoint: {fileID: 5566785222431732563}
+  buildingType: 2
 --- !u!54 &2285799237570530233
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -936,6 +937,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36117bd61bc64ac4d8ba7496b4780ab4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  AICharacterToBuild: {fileID: 2442090633485885881, guid: c90594f44d92e774db736ecc094cfcea, type: 3}
 --- !u!1 &5264611697124723775
 GameObject:
   m_ObjectHideFlags: 0

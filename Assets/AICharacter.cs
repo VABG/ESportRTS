@@ -25,10 +25,12 @@ public class AICharacter : MonoBehaviour
     Rigidbody[] ragdollRigidBodies;
     Collider[] ragdollColliders;
     Animator animator;
-    NavMeshAgent navMeshAgent;
+    [SerializeField] NavMeshAgent navMeshAgent;
     [SerializeField] GameObject selectedVisuals;
     [SerializeField] GameObject visuals;
     int velocityID;
+
+    GameObject attacker;
 
     bool doingAction = false;
     float actionTime = 0;
@@ -45,7 +47,6 @@ public class AICharacter : MonoBehaviour
         maxHealth = health;
         animator = GetComponentInChildren<Animator>();
         velocityID = Animator.StringToHash("Velocity");
-        navMeshAgent = GetComponent<NavMeshAgent>();
     }
 
     private void ToggleRagdoll(bool enabled)
@@ -140,15 +141,19 @@ public class AICharacter : MonoBehaviour
                 ReturningBehaviour();
                 break;
             case AIState.Running:
+                RunBehaviour();
                 break;
         }
         animator.SetFloat(velocityID, navMeshAgent.velocity.magnitude);
     }
 
-    public void TakeDamage(float dmg)
+    public void TakeDamage(float dmg, GameObject attacker)
     {
+        this.attacker = attacker;
         health -= dmg;
         SetHealthScale(health / maxHealth);
+        if (state != AIState.Fighting) StartRunBehaviour();
+
         if (health <= 0) Die();
     }
 
@@ -162,7 +167,7 @@ public class AICharacter : MonoBehaviour
         animator.enabled = false;
         Destroy(healthBar);
         Destroy(selectedVisuals);
-        Destroy(this);
+        Destroy(this.gameObject);
     }
 
     public void SetHealthScale(float scale)
@@ -170,6 +175,38 @@ public class AICharacter : MonoBehaviour
         healthBar.transform.localScale = 
             new Vector3(scale, healthBar.transform.localScale.y, healthBar.transform.localScale.z);
 
+    }
+
+    private void RunBehaviour()
+    {
+        actionTime -= Time.deltaTime;
+        if (actionTime < 0)
+        {
+            if (attacker == null)
+            {
+                state = AIState.Idle;
+                navMeshAgent.ResetPath();
+                return;
+            }
+            actionTime = 1;
+            Vector3 runDirection = transform.position - attacker.transform.position;
+            float d = runDirection.magnitude;
+            navMeshAgent.SetDestination(transform.position + runDirection);
+            if (d > 20)
+            {
+                state = AIState.Idle;
+                navMeshAgent.ResetPath();
+            }
+        }
+    }
+
+    private void StartRunBehaviour()
+    {
+        actionTime = 5.0f;
+        state = AIState.Running;
+        Vector3 runDirection = transform.position - attacker.transform.position;
+        float d = runDirection.magnitude;
+        navMeshAgent.SetDestination(transform.position + runDirection / d * 30);
     }
 
     private void AttackBehaviour()
@@ -196,7 +233,7 @@ public class AICharacter : MonoBehaviour
             }
             else
             {
-                toKill.TakeDamage(2);
+                toKill.TakeDamage(2, gameObject);
                 animator.SetTrigger("Attack");
                 doingAction = true;
                 actionTime = .5f;

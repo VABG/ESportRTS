@@ -523,6 +523,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   healthBar: {fileID: 849914206}
   ragdollFirstRigidbody: {fileID: 5658678808823108451}
+  navMeshAgent: {fileID: 2442090633485885885}
   selectedVisuals: {fileID: 926051003}
   visuals: {fileID: 3253118111662988746}
   health: 10

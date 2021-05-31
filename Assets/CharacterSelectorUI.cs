@@ -22,6 +22,11 @@ public class CharacterSelectorUI : MonoBehaviour
     {
         if (active)
         {
+            if (targetTransform == null)
+            {
+                active = false;
+                return;
+            }
             transform.Rotate(Vector3.forward * Time.deltaTime * 90);
             transform.position = targetTransform.position;
         }
