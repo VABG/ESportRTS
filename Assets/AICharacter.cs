@@ -15,6 +15,7 @@ public enum AIState
 
 public class AICharacter : MonoBehaviour
 {
+    [SerializeField]GameObject healthBar;
     AIState state;
     Resource activeResource;
     AICharacter toKill;
@@ -28,11 +29,13 @@ public class AICharacter : MonoBehaviour
 
     bool doingAction = false;
     float actionTime = 0;
-    float health = 10;
+    [SerializeField] float health = 10;
+    float maxHealth = 0;
 
     // Start is called before the first frame update
     void Start()
     {
+        maxHealth = health;
         animator = GetComponentInChildren<Animator>();
         velocityID = Animator.StringToHash("Velocity");
         navMeshAgent = GetComponent<NavMeshAgent>();
@@ -126,7 +129,15 @@ public class AICharacter : MonoBehaviour
     public void TakeDamage(float dmg)
     {
         health -= dmg;
+        SetHealthScale(health / maxHealth);
         if (health <= 0) Destroy(this.gameObject);
+    }
+
+    public void SetHealthScale(float scale)
+    {
+        healthBar.transform.localScale = 
+            new Vector3(scale, healthBar.transform.localScale.y, healthBar.transform.localScale.z);
+
     }
 
     private void AttackBehaviour()

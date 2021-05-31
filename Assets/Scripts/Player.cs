@@ -67,6 +67,7 @@ public class Player : MonoBehaviour
                 AICharacter c = hit.collider.GetComponent<AICharacter>();
                 if (c != null)
                 {
+                    if (c == selectedAI) return;
                     selectedAI.SetKillTarget(c);
                     selectedAI.SetState(AIState.Fighting);
                     return;

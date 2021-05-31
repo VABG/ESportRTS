@@ -46,7 +46,7 @@ public class Resource : MonoBehaviour
         }
         
         resources.gold -= takePerCollection.gold;
-        int gold = resources.gold - takePerCollection.gold;
+        int gold = takePerCollection.gold;
         if (resources.gold < 0)
         {
             gold += resources.gold;

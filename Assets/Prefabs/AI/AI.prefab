@@ -295,7 +295,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf210aa1dd30dde4b8ccfed9e19e274e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  healthBar: {fileID: 849914206}
   selectedVisuals: {fileID: 926051003}
+  health: 10
 --- !u!1001 &2442090634153222299
 PrefabInstance:
   m_ObjectHideFlags: 0
