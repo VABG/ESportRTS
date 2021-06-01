@@ -16,4 +16,9 @@ public class LookAtCam : MonoBehaviour
     {
         transform.rotation = target.rotation;
     }
+
+    public void UpdateLookAt()
+    {
+        transform.rotation = target.rotation;
+    }
 }

@@ -21,39 +21,25 @@ public class Resource : MonoBehaviour
 
     private Resources CollectResourcesFromSource()
     {
-        resources.food -= takePerCollection.food;
-        int food = takePerCollection.food;
-        if (resources.food < 0)
-        {
-            food += resources.food;
-            resources.food = 0;
-        }
+        int food = TakeResource(ref resources.food, takePerCollection.food);
+        int gold = TakeResource(ref resources.gold, takePerCollection.gold);
+        int rock = TakeResource(ref resources.rock, takePerCollection.rock);
+        int wood = TakeResource(ref resources.wood, takePerCollection.wood);
 
-        resources.wood -= takePerCollection.wood;
-        int wood =  takePerCollection.wood;
-        if (resources.wood < 0)
-        {
-            wood += resources.wood;
-            resources.wood = 0;
-        }
-
-        resources.rock -= takePerCollection.rock;
-        int rock = takePerCollection.rock;
-        if (resources.rock < 0)
-        {
-            rock += resources.rock;
-            resources.rock = 0;
-        }
-        
-        resources.gold -= takePerCollection.gold;
-        int gold = takePerCollection.gold;
-        if (resources.gold < 0)
-        {
-            gold += resources.gold;
-            resources.gold = 0;
-        }
         CheckIsEmpty();
         return new Resources { food = food, gold = gold, rock = rock, wood = wood };
+    }
+
+    public int TakeResource(ref int resource, int takeAmount)
+    {
+        resource -= takeAmount;
+        int take = takeAmount;
+        if (resource < 0)
+        {
+            take += resource;
+            resource = 0;
+        }
+        return take;
     }
 
     public float CollectionTime()

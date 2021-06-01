@@ -15,7 +15,7 @@ public enum AIState
 
 public class AICharacter : MonoBehaviour
 {
-    [SerializeField]GameObject healthBar;
+    [SerializeField]LookAtCam healthBar;
     AIState state;
     Resource activeResource;
     AICharacter toKill;
@@ -43,6 +43,7 @@ public class AICharacter : MonoBehaviour
         ragdollRigidBodies = ragdollFirstRigidbody.GetComponentsInChildren<Rigidbody>();
         ragdollColliders = ragdollFirstRigidbody.GetComponentsInChildren<Collider>();
         ToggleRagdoll(false);
+        healthBar.gameObject.SetActive(false);
 
         maxHealth = health;
         animator = GetComponentInChildren<Animator>();
@@ -105,13 +106,20 @@ public class AICharacter : MonoBehaviour
     public void Select()
     {
         if (selectedVisuals != null)
+        {
             selectedVisuals.SetActive(true);
+            healthBar.gameObject.SetActive(true);
+            healthBar.UpdateLookAt();
+        }
     }
 
     public void Deselect()
     {
         if (selectedVisuals != null)
+        {
             selectedVisuals.SetActive(false);
+            healthBar.gameObject.SetActive(false);
+        }
     }
 
     public void SetResource(Resource r)
@@ -154,27 +162,26 @@ public class AICharacter : MonoBehaviour
         SetHealthScale(health / maxHealth);
         if (state != AIState.Fighting) StartRunBehaviour();
 
-        if (health <= 0) Die();
+        if (health <= 0) Die((transform.position - attacker.transform.position).normalized);
     }
 
-    private void Die()
+    private void Die(Vector3 lastDmgDirection)
     {
         ToggleRagdoll(true);
         this.enabled = false;
         navMeshAgent.enabled = false;
         visuals.transform.parent = null;
-        GetComponent<CapsuleCollider>().enabled = false;
         animator.enabled = false;
         Destroy(healthBar);
         Destroy(selectedVisuals);
         Destroy(this.gameObject);
+        ragdollFirstRigidbody.GetComponent<Rigidbody>().AddForce(lastDmgDirection * 30, ForceMode.VelocityChange);
     }
 
     public void SetHealthScale(float scale)
     {
         healthBar.transform.localScale = 
             new Vector3(scale, healthBar.transform.localScale.y, healthBar.transform.localScale.z);
-
     }
 
     private void RunBehaviour()
@@ -211,6 +218,28 @@ public class AICharacter : MonoBehaviour
 
     private void AttackBehaviour()
     {
+        if (toKill == null)
+        {
+            state = AIState.Idle;
+            navMeshAgent.updateRotation = true;
+            navMeshAgent.ResetPath();
+            return;
+        }
+
+        float dist = (toKill.transform.position - transform.position).magnitude;
+        if (dist <= 2f)
+        {
+            navMeshAgent.updateRotation = false;
+            float angle = Vector3.SignedAngle(transform.forward, toKill.transform.position - transform.position, transform.up);
+            float rotation = angle * Time.deltaTime * 2;
+            if (rotation > angle) rotation = angle;
+            transform.Rotate(transform.up, rotation);
+        }
+        else if (dist > 2.1f)
+        {
+            navMeshAgent.updateRotation = true;
+        }
+
         if (doingAction)
         {
             actionTime -= Time.deltaTime;
@@ -221,23 +250,16 @@ public class AICharacter : MonoBehaviour
             return;
         }
 
-        if (toKill == null)
+        if (DistanceToTarget(toKill.transform.position) > 2)
         {
-            state = AIState.Idle;
+            navMeshAgent.SetDestination(toKill.transform.position);
         }
         else
         {
-            if (DistanceToTarget(toKill.transform.position) > 2)
-            {
-                navMeshAgent.SetDestination(toKill.transform.position);
-            }
-            else
-            {
-                toKill.TakeDamage(2, gameObject);
-                animator.SetTrigger("Attack");
-                doingAction = true;
-                actionTime = .5f;
-            }
+            toKill.TakeDamage(2, gameObject);
+            animator.SetTrigger("Attack");
+            doingAction = true;
+            actionTime = .5f;
         }
     }
 

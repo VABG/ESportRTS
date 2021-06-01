@@ -521,7 +521,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf210aa1dd30dde4b8ccfed9e19e274e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  healthBar: {fileID: 849914206}
+  healthBar: {fileID: 849914208}
   ragdollFirstRigidbody: {fileID: 5658678808823108451}
   navMeshAgent: {fileID: 2442090633485885885}
   selectedVisuals: {fileID: 926051003}
