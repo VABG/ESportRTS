@@ -9,11 +9,14 @@ public class Player : MonoBehaviour
     int gold;
     Structure activeBuilding;
     Structure selectedBuilding;
-    AICharacter selectedAI;
+    List<AICharacter> selectedAI;
     PlayerResources resources;
     List<Structure> structures;
     HUD hud;
     Camera cam;
+    Vector3 mouseDragStartPos;
+
+    [SerializeField] GameObject selectCube;
 
     [SerializeField] LayerMask placementLayerMask;
     [SerializeField] LayerMask selectionLayerMask;
@@ -35,6 +38,7 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        selectedAI = new List<AICharacter>();
         structures = new List<Structure>();
         cam = GetComponentInChildren<Camera>();
         navBuilder = FindObjectOfType<LocalNavMeshBuilder>();
@@ -62,33 +66,79 @@ public class Player : MonoBehaviour
                 Resource resource = hit.collider.GetComponent<Resource>();
                 if (resource != null)
                 {
-                    selectedAI.SetResource(resource);
-                    selectedAI.SetState(AIState.Collecting);
+                    AIResource(resource);
+                    //selectedAI.SetResource(resource);
+                    AIState(global::AIState.Collecting);
                     return;
                 }
                 AICharacter c = hit.collider.GetComponent<AICharacter>();
                 if (c != null)
                 {
-                    if (c == selectedAI) return;
-                    selectedAI.SetKillTarget(c);
-                    selectedAI.SetState(AIState.Fighting);
+                    AIKillTarget(c);
+                    //if (c == selectedAI) return;
+                    //selectedAI.SetKillTarget(c);
+                    //selectedAI.SetState(AIState.Fighting);
                     return;
                 }
 
-                selectedAI.SetState(AIState.Moving);
-                selectedAI.SetMovePosition(hit.point);
+                AIState(global::AIState.Moving);
+                AIMovePosition(hit.point);
             }
         }
     }
 
+    void AIResource(Resource resource)
+    {
+        foreach (AICharacter ai in selectedAI)
+        {
+            ai.SetResource(resource);
+        }
+    }
+
+    void AIKillTarget(AICharacter c)
+    {
+        if (selectedAI.Contains(c)) return;
+        foreach (AICharacter ai in selectedAI)
+        {
+            ai.SetKillTarget(c);
+            ai.SetState(global::AIState.Fighting);
+        }
+    }
+
+    void AIMovePosition(Vector3 position)
+    {
+        foreach (AICharacter ai in selectedAI)
+        {
+            ai.SetMovePosition(position);
+        }
+    }
+
+    void AIState(AIState state)
+    {
+        foreach (AICharacter ai in selectedAI)
+        {
+            ai.SetState(state);
+        }
+    }
+
+    void AIDeselect()
+    {
+        foreach (AICharacter ai in selectedAI)
+        {
+            ai.Deselect();
+        }
+        selectedAI.Clear();
+    }
+
     void TrySelect()
     {
+
         if (Input.GetMouseButtonDown(0) && !eventSystem.IsPointerOverGameObject())
         {
+            mouseDragStartPos = Input.mousePosition;
             hud.ClearState();
             selectedBuilding = null;
-            if (selectedAI != null) selectedAI.Deselect();
-            selectedAI = null;
+            if (selectedAI.Count != 0 && !Input.GetKey(KeyCode.LeftShift)) AIDeselect();
             worldCanvas.ClearSelectedCharacter();
             if (activeBuilding != null) return;
             Ray r = cam.ScreenPointToRay(Input.mousePosition);
@@ -103,7 +153,7 @@ public class Player : MonoBehaviour
                         if (s != null)
                         {
                             selectedBuilding = s;
-                            selectedAI = null;
+                            selectedAI.Clear();
                             hud.SetUIBuildingState(s.GetBuildingType(), s);
                             return;
                         }
@@ -115,13 +165,59 @@ public class Player : MonoBehaviour
                     AICharacter c = hit.collider.GetComponent<AICharacter>();
                     if (c != null)
                     {
+
                         selectedBuilding = null;
-                        selectedAI = c;
-                        selectedAI.Select();
+
+                        selectedAI.Add(c);
+                        c.Select();
                         worldCanvas.SetSelectedCharacter(c.gameObject);
                     }
                 }
             }
+        }
+
+        if (Input.GetMouseButtonUp(0))
+        {
+            Vector3 mouseDragEndPos = Input.mousePosition;
+            mouseDragEndPos.z += 10;
+            mouseDragStartPos.z += 10;
+
+            Ray startRay = cam.ScreenPointToRay(mouseDragStartPos);
+            Ray endRay = cam.ScreenPointToRay(mouseDragEndPos);
+
+            Vector3 mStart = startRay.origin + startRay.direction * (Mathf.Abs(startRay.origin.y)/Mathf.Abs(startRay.direction.y));
+            Vector3 mEnd = endRay.origin + endRay.direction * (Mathf.Abs(endRay.origin.y) / Mathf.Abs(endRay.direction.y));
+            
+            Debug.DrawLine(mStart, mEnd);
+            SelectGroup(mStart + (mEnd - mStart)/2, (mEnd - mStart) / 2);
+        }
+    }
+
+    void SelectGroup(Vector3 center, Vector3 halfExtent)
+    {
+        halfExtent = new Vector3(Mathf.Abs(halfExtent.x), Mathf.Abs(halfExtent.y), Mathf.Abs(halfExtent.z));
+        halfExtent.y = 5;
+
+        //selectCube.transform.position = center;
+        //selectCube.transform.localScale = halfExtent * 2;
+
+
+        RaycastHit[] rHits = Physics.BoxCastAll(center, halfExtent, Vector3.down, Quaternion.identity, 1000, selectionLayerMask);
+
+        bool foundAI = false;
+        foreach (RaycastHit h in rHits)
+        {
+            AICharacter c = h.transform.GetComponent<AICharacter>();
+            if (c && !selectedAI.Contains(c))
+            {
+                selectedAI.Add(c);
+                c.Select();
+                foundAI = true;
+            }
+        }
+        if (selectedBuilding != null && foundAI)
+        {
+            selectedBuilding = null;
         }
     }
 
