@@ -162,10 +162,10 @@ public class AICharacter : MonoBehaviour
         SetHealthScale(health / maxHealth);
         if (state != AIState.Fighting) StartRunBehaviour();
 
-        if (health <= 0) Die((transform.position - attacker.transform.position).normalized);
+        if (health <= 0) Die((transform.position - attacker.transform.position).normalized, 30);
     }
 
-    private void Die(Vector3 lastDmgDirection)
+    private void Die(Vector3 lastDmgDirection, float force)
     {
         ToggleRagdoll(true);
         this.enabled = false;
@@ -175,7 +175,7 @@ public class AICharacter : MonoBehaviour
         Destroy(healthBar);
         Destroy(selectedVisuals);
         Destroy(this.gameObject);
-        ragdollFirstRigidbody.GetComponent<Rigidbody>().AddForce(lastDmgDirection * 30, ForceMode.VelocityChange);
+        ragdollFirstRigidbody.GetComponent<Rigidbody>().AddForce(lastDmgDirection * force, ForceMode.VelocityChange);
     }
 
     public void SetHealthScale(float scale)
@@ -360,5 +360,10 @@ public class AICharacter : MonoBehaviour
         resources.gold = 0;
         resources.rock = 0;
         resources.wood = 0;
+    }
+
+    public void Kill(Vector3 attackPos)
+    {
+        Die((transform.position - attackPos).normalized, 0);
     }
 }

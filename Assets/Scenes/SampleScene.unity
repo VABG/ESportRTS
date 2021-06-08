@@ -453,7 +453,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4427920868903789388, guid: d82a6765d5f020041b6c2c9bd993cece, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 21.89
+      value: 24.13
       objectReference: {fileID: 0}
     - target: {fileID: 4427920868903789388, guid: d82a6765d5f020041b6c2c9bd993cece, type: 3}
       propertyPath: m_LocalPosition.y
@@ -461,7 +461,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4427920868903789388, guid: d82a6765d5f020041b6c2c9bd993cece, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -28.02
+      value: -7.42
       objectReference: {fileID: 0}
     - target: {fileID: 4427920868903789388, guid: d82a6765d5f020041b6c2c9bd993cece, type: 3}
       propertyPath: m_LocalRotation.w
@@ -1241,8 +1241,12 @@ MonoBehaviour:
   selectionLayerMask:
     serializedVersion: 2
     m_Bits: 201
+  marqueeLayerMask:
+    serializedVersion: 2
+    m_Bits: 64
   eventSystem: {fileID: 1218908447}
   worldCanvas: {fileID: 328013615}
+  raket: {fileID: 4235314709931044077, guid: a5a2ca991d0cb4b4195c0615bee8f23b, type: 3}
 --- !u!114 &665103728
 MonoBehaviour:
   m_ObjectHideFlags: 0

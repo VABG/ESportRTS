@@ -20,9 +20,11 @@ public class Player : MonoBehaviour
 
     [SerializeField] LayerMask placementLayerMask;
     [SerializeField] LayerMask selectionLayerMask;
+    [SerializeField] LayerMask marqueeLayerMask;
     [SerializeField] EventSystem eventSystem;
     LocalNavMeshBuilder navBuilder;
     [SerializeField] WorldCanvas worldCanvas;
+    [SerializeField] Raket raket;
 
     public void StartPlacingBuilding(Structure buildingType)
     {
@@ -53,6 +55,20 @@ public class Player : MonoBehaviour
         TrySelect();
         TryPlacingBuilding();
         TryMoveAI();
+        ShootRocket();
+    }
+
+    void ShootRocket()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            Ray r = cam.ScreenPointToRay(Input.mousePosition);
+            if (Physics.Raycast(r, out RaycastHit hit, 5000))
+            {
+                Raket raketSpawn = Instantiate(raket, cam.transform.position, cam.transform.rotation);
+                raketSpawn.SetTargetPosition(hit.point);
+            }
+        }
     }
 
     void TryMoveAI()
@@ -188,7 +204,7 @@ public class Player : MonoBehaviour
             Vector3 mStart = startRay.origin + startRay.direction * (Mathf.Abs(startRay.origin.y)/Mathf.Abs(startRay.direction.y));
             Vector3 mEnd = endRay.origin + endRay.direction * (Mathf.Abs(endRay.origin.y) / Mathf.Abs(endRay.direction.y));
             
-            Debug.DrawLine(mStart, mEnd);
+            //Debug.DrawLine(mStart, mEnd);
             SelectGroup(mStart + (mEnd - mStart)/2, (mEnd - mStart) / 2);
         }
     }
@@ -198,11 +214,11 @@ public class Player : MonoBehaviour
         halfExtent = new Vector3(Mathf.Abs(halfExtent.x), Mathf.Abs(halfExtent.y), Mathf.Abs(halfExtent.z));
         halfExtent.y = 5;
 
-        //selectCube.transform.position = center;
-        //selectCube.transform.localScale = halfExtent * 2;
+        selectCube.transform.position = center;
+        selectCube.transform.localScale = halfExtent * 2;
 
 
-        RaycastHit[] rHits = Physics.BoxCastAll(center, halfExtent, Vector3.down, Quaternion.identity, 1000, selectionLayerMask);
+        RaycastHit[] rHits = Physics.BoxCastAll(center, halfExtent, Vector3.down, Quaternion.identity, 1000, marqueeLayerMask);
 
         bool foundAI = false;
         foreach (RaycastHit h in rHits)
